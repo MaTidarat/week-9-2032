@@ -1,6 +1,6 @@
 # HOW TO RUN
 
-```bash
+```bash test
 node server.js
 ```
 
@@ -15,3 +15,4 @@ or
 ```
 curl "http://localhost:3000/greeting?name=John"
 ```
+
