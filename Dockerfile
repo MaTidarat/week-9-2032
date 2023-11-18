@@ -1,5 +1,13 @@
-FROM node:21-bullseye-slim
-COPY . .
+FROM node:19-alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
 RUN npm install
 
-ENTRYPOINT [ "node", "server.js"]
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
