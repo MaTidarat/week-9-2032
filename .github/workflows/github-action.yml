@@ -6,7 +6,7 @@ on:
       - Dev
 env: 
    NEW_TAG_IMAGE: 1.0.0
-
+  
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -69,4 +69,4 @@ jobs:
         run: cat ./manifest/dev/deployment.yaml
 
       - name: Deploy Docker image New Version to K8s cluster
-        run: kubectl apply -f ./manifest/dev/. -n group-3
+        run: kubectl apply -f ./manifest/dev/. -n develop
