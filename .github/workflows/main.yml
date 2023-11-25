@@ -22,7 +22,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set env
-        run: echo "RELEASE_VERSION=${{ github.ref }}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${{ github.sha }}" >> $GITHUB_ENV
       - name: Test
         run: |
           echo $RELEASE_VERSION
