@@ -10,7 +10,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: tcc-week-09
+          - path: /tcc-week-09
             pathType: Prefix
             backend:
               service:
