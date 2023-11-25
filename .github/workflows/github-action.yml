@@ -69,4 +69,4 @@ jobs:
         run: cat ./manifest/dev/deployment.yaml
 
       - name: Deploy Docker image New Version to K8s cluster
-        run: kubectl apply -f ./manifest/dev/. -n develop
+        run: kubectl apply -f ./manifest/dev/. -n group-3
