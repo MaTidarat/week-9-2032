@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: week08-configmap
+  namespace: develop
+data:
+  ENV_NAME: DEV
