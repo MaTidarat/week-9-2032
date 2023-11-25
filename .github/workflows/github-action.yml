@@ -30,48 +30,40 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          # labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/week-9-2032:1.0.0
 
-      - name: Update K8s Deployment
+  deploy_to_k8s:
+
+    name: Deploy Image to K8s Cluster
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  
+
+      - name: Create K8S Config
+        env: 
+             KUBECTL_CONFIG_CONTENT: ${{ secrets.KUBE_CONFIG }}
         run: |
-          # Generate a new image tag using the environment variable
-          image_with_new_tag="${{ secrets.DOCKER_USERNAME }}/tcc-nodejs:${{ github.sha }}"
+             mkdir -p ~/.kube
+             echo "$KUBECTL_CONFIG_CONTENT" > ~/.kube/config
 
-          # Update the K8s deployment file using yq
-          yq eval ".spec.template.spec.containers[0].image |= \"${image_with_new_tag}\"" -i ./manifest/deployment.yaml
-
-          # Commit the changes
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout develop
-          git add ./manifest/deployment.yaml
-          git commit -m "Update image to ${image_with_new_tag}"
-          git push origin develop
-
-      - name: set kubeconfig
-        run: kubectl config set-cluster tcc-01 --server=$CLUSTER_NAME  
-        env: 
-          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
-
-      - name: set kubeconfig
-        run: kubectl config set-cluster tcc-01 --server=$CLUSTER_NAME  
-        env: 
-          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
+      - name: Get Current Cluster
+        run: kubectl config current-context
       
-      - name : use context
-        run: kubectl config set-context  tcc-01 --cluster=tcc-01  
+      - name: Check yq Version 
+        run: yq --version
+      
+      - name: Define Image New Version
+        run: |
+              echo "image_with_new_tag=${{ secrets.DOCKER_USERNAME }}/week-9-1021:${{ env.NEW_TAG_IMAGE }}" >> $GITHUB_ENV
+              echo $image_with_new_tag
 
-      - name : use Token
-        run: kubectl config set-credentials tcc-01-user --token=$KUBE_TOKEN
-        env: 
-          KUBE_TOKEN: ${{ secrets.KUBE_TOKEN }}      
+      - name: Update Image in Deployment K8s
+        run: yq -i '.spec.template.spec.containers[0].image=strenv(image_with_new_tag)' ./manifest/dev/deployment.yaml
 
-      - name : confit  user
-        run: kubectl config set-context  tcc-01 --user=tcc-01-user
-    
-      - name : confit  user
-        run: kubectl config use-context  tcc-01
+      - name: Display yaml file
+        run: cat ./manifest/dev/deployment.yaml
 
-      - name: Deploy to Kubernetes
-        run: kubectl apply -f deployment.yaml -n group-3
+      - name: Deploy Docker image New Version to K8s cluster
+        run: kubectl apply -f ./manifest/dev/. -n group-3
