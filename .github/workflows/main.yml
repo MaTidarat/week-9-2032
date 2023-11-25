@@ -27,6 +27,14 @@ jobs:
         run: |
           echo $RELEASE_VERSION
           echo ${{ env.RELEASE_VERSION }}
+          echo ${{ github.sha }}
+          echo "version=v$(npm pkg get version | tr -d '\"')" >> $GITHUB_OUTPUT
+
+      # - name: Get tag
+      #     id: get_tag
+      #     run: |
+      #       git branch --show-current
+      #       git pull
 
       # - name: Build Docker image
       #   uses: flownative/action-docker-build@v1
