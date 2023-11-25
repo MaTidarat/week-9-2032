@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tcc-nodejs-deployment
+  name: tcc-week-09-nodejs-deployment
   namespace: group-3
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: tcc-nodejs
+      app: tcc-week-09-nodejs
   template:
     metadata:
       labels:
-        app: tcc-nodejs
+        app: tcc-week-09-nodejs
     spec:
       containers:
         - name: mamatidarat
